@@ -3,170 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>প্রশ্নপত্র জেনারেটর</title>
+    <title>Question Maker Pro</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600&display=swap');
 
         body {
             font-family: 'Hind Siliguri', sans-serif;
-            background-color: #f4f4f9;
+            background-color: #f0f2f5;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
-            gap: 20px;
+            gap: 15px;
+            box-sizing: border-box;
+            color: #000;
         }
 
-        /* বাম পাশের ইনপুট প্যানেল */
+        /* বাম পাশের সেটিংস প্যানেল */
         .control-panel {
-            width: 35%;
+            width: 320px;
             background: white;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            height: fit-content;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: 95vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 10px;
+            flex-shrink: 0;
         }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
-
+        h2 { font-size: 18px; text-align: center; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+        
+        .form-group { margin-bottom: 10px; }
+        
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             font-weight: 600;
+            font-size: 13px;
+            color: #444;
         }
 
         input, select, textarea {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
             border-radius: 4px;
             font-family: inherit;
             box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #28a745;
         }
 
         button {
             width: 100%;
-            padding: 10px;
+            padding: 8px;
             background-color: #28a745;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
+            font-size: 15px;
+            margin-top: 5px;
+            font-weight: 500;
         }
 
-        button:hover {
-            background-color: #218838;
-        }
+        button:hover { background-color: #218838; }
 
         button.print-btn {
             background-color: #007bff;
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
-        /* ডান পাশের প্রিভিউ (প্রশ্নপত্র) */
+        /* ডান পাশের প্রিভিউ (A4 সাইজ) */
         .paper-preview {
-            width: 65%;
+            flex-grow: 1;
             background: white;
-            padding: 40px;
-            min-height: 297mm; /* A4 size height approximately */
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 40px; /* মার্জিন স্ট্যান্ডার্ড রাখা হয়েছে */
+            min-height: 297mm;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             position: relative;
         }
 
-        /* প্রশ্নপত্রের ডিজাইন */
+        /* হেডার ডিজাইন (ফন্ট সাইজ ছোট করা হয়েছে) */
         .paper-header {
             text-align: center;
-            border-bottom: 2px solid black;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #000;
             padding-bottom: 10px;
-            margin-bottom: 20px;
         }
 
         .paper-header h1 {
             margin: 0;
-            font-size: 28px;
-            color: #000;
+            font-size: 26px; /* আগের চেয়ে ছোট */
+            font-weight: 700;
+            line-height: 1.2;
         }
 
         .paper-header h3 {
-            margin: 5px 0;
-            font-weight: normal;
+            margin: 5px 0 10px 0;
+            font-size: 18px;
+            font-weight: 500;
         }
 
-        .exam-info {
+        .info-grid {
             display: flex;
-            justify-content: space-between;
-            font-weight: bold;
+            flex-direction: column;
+            gap: 5px;
+            font-size: 14px; /* তথ্যের ফন্ট সাইজ */
+            font-weight: 600;
             margin-top: 10px;
         }
 
-        .question-section {
-            margin-top: 20px;
+        .info-row {
+            display: flex;
+            justify-content: space-between;
         }
+
+        /* প্রশ্ন সেকশন */
+        .question-section { margin-top: 10px; }
 
         .q-head {
             font-weight: bold;
-            font-size: 18px;
+            font-size: 16px; /* হেডিং সাইজ */
             margin-top: 15px;
-            text-decoration: underline;
+            margin-bottom: 5px;
+            text-decoration: underline; /* আগের মতো আন্ডারলাইন */
         }
 
         .q-body {
-            font-size: 16px;
-            margin-left: 0;
-            white-space: pre-wrap; /* লাইন ব্রেক ঠিক রাখার জন্য */
-            margin-bottom: 10px;
+            font-size: 15px; /* বডি টেক্সট সাইজ */
+            line-height: 1.5;
+            white-space: pre-wrap;
+            text-align: justify;
         }
 
-        /* ডিলিট বাটন (শুধু এডিটিং মোডে দেখাবে) */
+        /* ডিলিট বাটন */
         .delete-q {
             color: red;
             cursor: pointer;
             font-size: 12px;
-            margin-left: 10px;
+            margin-left: 8px;
             border: 1px solid red;
-            padding: 2px 5px;
+            padding: 0 4px;
             border-radius: 3px;
+            text-decoration: none;
+            display: inline-block;
         }
 
-        /* প্রিন্ট করার সময় যা যা হাইড হবে */
+        /* ওয়াটারমার্ক */
+        .watermark {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+            pointer-events: none;
+        }
+
+        /* প্রিন্ট মুড */
         @media print {
             body {
                 background: white;
                 display: block;
                 padding: 0;
             }
-            .control-panel {
-                display: none;
-            }
+            .control-panel { display: none; }
             .paper-preview {
                 width: 100%;
                 box-shadow: none;
                 padding: 0;
                 margin: 0;
+                min-height: auto;
             }
-            .delete-q {
-                display: none;
+            .delete-q { display: none; }
+            
+            /* ওয়াটারমার্ক প্রতি পেজে ফিক্সড */
+            .watermark {
+                position: fixed;
+                bottom: 5px;
+                left: 0;
+                width: 100%;
+                text-align: center;
+                color: #aaa;
             }
-            /* প্রিন্টে মার্জিন ঠিক রাখা */
+
             @page {
                 size: A4;
-                margin: 20mm;
+                margin: 15mm 20mm; /* টপ-বটম ১৫মিমি, লেফট-রাইট ২০মিমি */
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- বাম পাশ: তথ্য দেওয়ার ফর্ম -->
+    <!-- বাম পাশ: সেটিংস -->
     <div class="control-panel">
-        <h2 style="text-align: center;">সেটিংস প্যানেল</h2>
+        <h2>সেটিংস প্যানেল</h2>
         
         <div class="form-group">
             <label>প্রতিষ্ঠানের নাম:</label>
-            <input type="text" id="instName" placeholder="স্কুল বা কলেজের নাম লিখুন" oninput="updateHeader()">
+            <input type="text" id="instName" placeholder="স্কুল/কলেজের নাম" oninput="updateHeader()">
         </div>
 
         <div class="form-group">
@@ -176,99 +219,124 @@
                 <option value="মধ্যবর্তী পরীক্ষা">মধ্যবর্তী পরীক্ষা</option>
                 <option value="ফাইনাল পরীক্ষা">ফাইনাল পরীক্ষা</option>
                 <option value="মডেল টেস্ট">মডেল টেস্ট</option>
+                <option value="শ্রেণি পরীক্ষা">শ্রেণি পরীক্ষা</option>
             </select>
         </div>
 
         <div class="form-group">
-            <div style="display: flex; gap: 10px;">
-                <div style="flex: 1;">
-                    <label>সময়:</label>
-                    <input type="text" id="examTime" placeholder="যেমন: ১ ঘণ্টা ৩০ মি." oninput="updateHeader()">
-                </div>
-                <div style="flex: 1;">
-                    <label>পূর্ণমান:</label>
-                    <input type="number" id="totalMarks" placeholder="যেমন: ১০০" oninput="updateHeader()">
-                </div>
-            </div>
+            <label>বিষয় (Subject):</label>
+            <input type="text" id="subject" placeholder="যেমন: বাংলা" oninput="updateHeader()">
         </div>
 
-        <hr>
-        <h3>প্রশ্ন যোগ করুন</h3>
+        <div class="form-group">
+            <label>ট্রেড / শ্রেণি:</label>
+            <input type="text" id="trade" placeholder="যেমন: কম্পিউটার / দশম শ্রেণি" oninput="updateHeader()">
+        </div>
 
         <div class="form-group">
-            <label>প্রশ্নের হেডলাইন (Group):</label>
-            <input type="text" id="qHead" placeholder="যেমন: ১. নিচের প্রশ্নগুলোর উত্তর দাও (মান: ১০)">
+            <label>সময় (টেক্সট):</label>
+            <input type="text" id="examTime" placeholder="যেমন: ১ ঘণ্টা ৩০ মি." oninput="updateHeader()">
+        </div>
+
+        <div class="form-group">
+            <label>পূর্ণমান (টেক্সট):</label>
+            <input type="text" id="totalMarks" placeholder="যেমন: ৫০" oninput="updateHeader()">
+        </div>
+
+        <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ddd;">
+        <h3 style="font-size: 16px; margin: 0 0 10px 0;">প্রশ্ন যোগ করুন</h3>
+
+        <div class="form-group">
+            <label>হেডলাইন (যেমন: ১. নিচের প্রশ্নের উত্তর দাও):</label>
+            <input type="text" id="qHead">
         </div>
 
         <div class="form-group">
             <label>প্রশ্ন:</label>
-            <textarea id="qText" rows="4" placeholder="এখানে প্রশ্নটি লিখুন..."></textarea>
+            <textarea id="qText" rows="4"></textarea>
         </div>
 
         <button onclick="addQuestion()">প্রশ্ন যোগ করুন +</button>
-        <button onclick="window.print()" class="print-btn">🖨️ প্রশ্নপত্র প্রিন্ট করুন</button>
+        <button onclick="window.print()" class="print-btn">🖨️ প্রিন্ট করুন</button>
     </div>
 
-    <!-- ডান পাশ: প্রশ্নপত্র প্রিভিউ -->
+    <!-- ডান পাশ: প্রিভিউ -->
     <div class="paper-preview" id="paper">
         <div class="paper-header">
-            <h1 id="displayInstName">প্রতিষ্ঠানের নাম এখানে আসবে</h1>
+            <h1 id="displayInstName">প্রতিষ্ঠানের নাম</h1>
             <h3 id="displayExamType">সাপ্তাহিক পরীক্ষা</h3>
-            <div class="exam-info">
-                <span id="displayTime">সময়: ০০ ঘণ্টা</span>
-                <span id="displayMarks">পূর্ণমান: ০০</span>
+            
+            <div class="info-grid">
+                <div class="info-row">
+                    <span id="displaySubject">বিষয়: ...</span>
+                    <span id="displayTrade">শ্রেণি/ট্রেড: ...</span>
+                </div>
+                <div class="info-row">
+                    <span id="displayTime">সময়: ...</span>
+                    <span id="displayMarks">পূর্ণমান: ...</span>
+                </div>
             </div>
         </div>
 
         <div id="questionsContainer">
-            <!-- এখানে প্রশ্নগুলো জাভাস্ক্রিপ্ট দিয়ে যুক্ত হবে -->
+            <!-- প্রশ্নগুলো এখানে যুক্ত হবে -->
+        </div>
+
+        <div class="watermark">
+            © 2026 | Created by Md. Borhan Ali — Junior Developer
         </div>
     </div>
 
     <script>
-        // হেডার আপডেট করার ফাংশন
         function updateHeader() {
-            document.getElementById('displayInstName').innerText = document.getElementById('instName').value || 'প্রতিষ্ঠানের নাম';
-            document.getElementById('displayExamType').innerText = document.getElementById('examType').value;
-            document.getElementById('displayTime').innerText = 'সময়: ' + (document.getElementById('examTime').value || '...');
-            document.getElementById('displayMarks').innerText = 'পূর্ণমান: ' + (document.getElementById('totalMarks').value || '...');
+            const getVal = (id) => document.getElementById(id).value;
+            const setTxt = (id, txt) => document.getElementById(id).innerText = txt;
+
+            setTxt('displayInstName', getVal('instName') || 'প্রতিষ্ঠানের নাম');
+            setTxt('displayExamType', getVal('examType'));
+            
+            const sub = getVal('subject');
+            setTxt('displaySubject', sub ? 'বিষয়: ' + sub : 'বিষয়: ...');
+
+            const trade = getVal('trade');
+            setTxt('displayTrade', trade ? 'শ্রেণি/ট্রেড: ' + trade : 'শ্রেণি/ট্রেড: ...');
+
+            const time = getVal('examTime');
+            setTxt('displayTime', time ? 'সময়: ' + time : 'সময়: ...');
+
+            const marks = getVal('totalMarks');
+            setTxt('displayMarks', marks ? 'পূর্ণমান: ' + marks : 'পূর্ণমান: ...');
         }
 
-        // প্রশ্ন যোগ করার ফাংশন
         function addQuestion() {
             const headText = document.getElementById('qHead').value;
             const bodyText = document.getElementById('qText').value;
             const container = document.getElementById('questionsContainer');
 
-            if (headText === "" && bodyText === "") {
-                alert("দয়া করে অন্তত হেডিং বা প্রশ্ন লিখুন!");
+            if (!headText && !bodyText) {
+                alert("কিছু একটা লিখুন!");
                 return;
             }
 
-            // একটি নতুন div তৈরি করা পুরো প্রশ্নের সেটের জন্য
             const qDiv = document.createElement('div');
             qDiv.className = 'question-section';
 
             let htmlContent = '';
+            // ডিলিট বাটন এখন টেক্সটের মতো দেখাবে এবং প্রিন্টে হাইড হবে
+            const delBtn = `<span class="delete-q" onclick="this.closest('.question-section').remove()">মুছুন</span>`;
 
-            // যদি হেডিং থাকে
             if (headText) {
-                htmlContent += `<div class="q-head">${headText} <span class="delete-q" onclick="this.parentElement.parentElement.remove()">[মুছুন]</span></div>`;
+                htmlContent += `<div class="q-head">${headText} ${!bodyText ? delBtn : ''}</div>`;
             }
 
-            // যদি বডি থাকে
             if (bodyText) {
-                // যদি হেডিং না থাকে তাহলে ডিলিট বাটন বডির সাথে থাকবে
-                const deleteBtn = !headText ? `<span class="delete-q" onclick="this.parentElement.parentElement.remove()">[মুছুন]</span>` : '';
-                htmlContent += `<div class="q-body">${bodyText} ${deleteBtn}</div>`;
+                htmlContent += `<div class="q-body">${bodyText} ${delBtn}</div>`;
             }
 
             qDiv.innerHTML = htmlContent;
             container.appendChild(qDiv);
 
-            // ইনপুট ফিল্ড ক্লিয়ার করা (হেডলাইন রেখে দেওয়া হয়েছে যাতে একই হেডে একাধিক প্রশ্ন লেখা সহজ হয়, চাইলে ক্লিয়ার করা যাবে)
             document.getElementById('qText').value = '';
-            // document.getElementById('qHead').value = ''; // যদি হেডলাইন প্রতিবার মুছতে চাও, এই লাইনের কমেন্ট তুলে দাও
         }
     </script>
 </body>
